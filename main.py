@@ -1,43 +1,193 @@
-# main.py
+"""
+Dara Studio Builder v1.0
 
-from pathlib import Path
-
-from config import PROJECT_NAME, CREATE_EMPTY_FILES, OVERWRITE_EXISTING
-from project_files import FILES
-from templates import TEMPLATES
+Main project generator.
+Works with Termux, Linux and Windows.
+"""
 
 
-def create_project():
-    root = Path(PROJECT_NAME)
+import os
 
-    created = 0
-    skipped = 0
 
-    for file in FILES:
-        path = root / file
+from files import (
+    PROJECT_NAME,
+    FOLDERS,
+    FILES
+)
 
-        # Create parent folders
-        path.parent.mkdir(parents=True, exist_ok=True)
 
-        # Skip existing files if overwrite is disabled
-        if path.exists() and not OVERWRITE_EXISTING:
-            skipped += 1
-            continue
+from rest import CODES
 
-        # Get template content (or empty)
-        content = TEMPLATES.get(file, "")
 
-        if content or CREATE_EMPTY_FILES:
-            path.write_text(content, encoding="utf-8")
-            created += 1
+from final import EXTRA_CODES
 
-    print("=" * 50)
-    print(f"Project : {PROJECT_NAME}")
-    print(f"Created : {created} files")
-    print(f"Skipped : {skipped} files")
-    print("Done!")
-    print("=" * 50)
+
+
+
+def create_folder(path):
+
+    os.makedirs(
+        path,
+        exist_ok=True
+    )
+
+
+
+
+def write_file(path, content):
+
+    folder = os.path.dirname(path)
+
+
+    if folder:
+
+        create_folder(folder)
+
+
+    with open(
+        path,
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        file.write(content)
+
+
+
+
+def prepare_project():
+
+
+    print()
+
+    print(
+        "Creating folders..."
+    )
+
+
+    for folder in FOLDERS:
+
+
+        create_folder(
+
+            os.path.join(
+
+                PROJECT_NAME,
+
+                folder
+
+            )
+
+        )
+
+
+
+    print(
+        "Folders complete"
+    )
+
+
+
+
+def generate_files():
+
+
+    print()
+
+    print(
+        "Writing files..."
+    )
+
+
+    all_codes = {}
+
+
+    all_codes.update(
+        CODES
+    )
+
+
+    all_codes.update(
+        EXTRA_CODES
+    )
+
+
+
+    for file_name in FILES:
+
+
+        content = all_codes.get(
+
+            file_name,
+
+            "// File created by Dara Studio Builder"
+
+        )
+
+
+        write_file(
+
+            os.path.join(
+
+                PROJECT_NAME,
+
+                file_name
+
+            ),
+
+            content
+
+        )
+
+
+
+        print(
+
+            "[+]",
+
+            file_name
+
+        )
+
+
+
+
+def main():
+
+
+    print("""
+================================
+
+       Dara Studio Builder
+
+              v1.0
+
+================================
+""")
+
+
+    prepare_project()
+
+
+    generate_files()
+
+
+
+    print()
+
+    print(
+        "Dara Studio project created successfully."
+    )
+
+
+    print(
+        "Location:",
+        PROJECT_NAME
+    )
+
+
 
 
 if __name__ == "__main__":
-    create_project()
+
+    main()
