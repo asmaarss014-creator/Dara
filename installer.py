@@ -3,17 +3,60 @@ import subprocess
 import sys
 
 
-def run_builder():
-    print("\nStarting Dara Builder...\n")
+def install_builder():
+
+    print("\nInstalling Dara Builder...\n")
+
+    required = [
+        "main.py",
+        "files.py",
+        "rest.py",
+        "final.py"
+    ]
+
+    missing = []
+
+    for file in required:
+        if not os.path.exists(file):
+            missing.append(file)
+
+    if missing:
+        print("Missing files:")
+        for item in missing:
+            print("-", item)
+    else:
+        print("Dara Builder installed successfully.")
+        print("Run: python main.py")
+
+
+
+def add_to_repo():
+
+    print("\nAdding files to Dara repository...\n")
 
     subprocess.run(
-        [sys.executable, "main.py"]
+        "git add .",
+        shell=True
+    )
+
+    message = input(
+        "Commit message: "
+    )
+
+    subprocess.run(
+        f'git commit -m "{message}"',
+        shell=True
+    )
+
+    print(
+        "Files added to repository."
     )
 
 
-def github_connect():
 
-    print("\nGitHub Setup")
+def connect_github():
+
+    print("\nGitHub Connection\n")
 
     username = input(
         "GitHub username: "
@@ -23,13 +66,6 @@ def github_connect():
         "Repository name: "
     )
 
-    branch = input(
-        "Branch name (default main): "
-    )
-
-    if branch.strip() == "":
-        branch = "main"
-
 
     url = (
         f"https://github.com/"
@@ -38,12 +74,15 @@ def github_connect():
     )
 
 
-    print("\nRemote URL:")
+    print(
+        "\nRepository:"
+    )
+
     print(url)
 
 
     confirm = input(
-        "\nAdd this remote? (y/n): "
+        "Connect? (y/n): "
     )
 
 
@@ -60,34 +99,36 @@ def github_connect():
         )
 
         print(
-            "GitHub remote added."
+            "GitHub connected."
         )
 
 
-def check_requirements():
+
+def create_requirements():
 
     print(
-        "\nChecking Python..."
-    )
-
-    print(
-        sys.version
+        "\nCreating requirements.txt..."
     )
 
 
-    if os.path.exists(
-        "requirements.txt"
-    ):
+    content = """# Dara Studio Builder
 
-        print(
-            "requirements.txt found"
-        )
+# Uses Python standard library only
+"""
 
-    else:
 
-        print(
-            "requirements.txt missing"
-        )
+    with open(
+        "requirements.txt",
+        "w",
+        encoding="utf-8"
+    ) as file:
+
+        file.write(content)
+
+
+    print(
+        "requirements.txt created."
+    )
 
 
 
@@ -101,10 +142,11 @@ def menu():
        Dara Studio Setup
 ================================
 
-1. Install / Run main.py
-2. Connect GitHub Repo
-3. Check Requirements
-4. Exit
+1. Install Dara Builder
+2. Add to Dara Repo
+3. Connect GitHub
+4. Create requirements.txt
+5. Exit
 
 """
         )
@@ -116,37 +158,25 @@ def menu():
 
 
         if choice == "1":
-
-            run_builder()
-
+            install_builder()
 
         elif choice == "2":
-
-            github_connect()
-
+            add_to_repo()
 
         elif choice == "3":
-
-            check_requirements()
-
+            connect_github()
 
         elif choice == "4":
+            create_requirements()
 
-            print(
-                "Goodbye"
-            )
-
+        elif choice == "5":
+            print("Exit")
             break
 
-
         else:
-
-            print(
-                "Invalid option"
-            )
+            print("Invalid option")
 
 
 
 if __name__ == "__main__":
-
     menu()
