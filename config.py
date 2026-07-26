@@ -1,0 +1,25 @@
+# config.py
+
+PROJECT_NAME = "DaraStudio"
+
+PACKAGE_NAME = "com.darastudio"
+
+LANGUAGE = "Kotlin"
+
+MIN_SDK = 24
+TARGET_SDK = 36
+COMPILE_SDK = 36
+
+KOTLIN_VERSION = "2.2.0"
+AGP_VERSION = "8.10.0"
+
+CREATE_EMPTY_FILES = True
+OVERWRITE_EXISTING = False
+
+USE_JETPACK_COMPOSE = True
+USE_MATERIAL3 = True
+
+AUTHOR = "Dara Studio"
+
+VERSION_NAME = "1.0.0"
+VERSION_CODE = 1
