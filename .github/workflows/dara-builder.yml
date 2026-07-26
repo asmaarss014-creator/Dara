@@ -1,0 +1,89 @@
+name: Dara Studio Builder
+
+on:
+  push:
+    branches:
+      - main
+      - master
+      - dev
+  pull_request:
+    branches:
+      - main
+      - master
+      - dev
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  validate-builder:
+    name: Validate Builder
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        python-version:
+          - "3.11"
+          - "3.12"
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+
+      - name: Upgrade pip
+        run: |
+          python -m pip install --upgrade pip
+
+      - name: Install dependencies
+        run: |
+          if [ -f requirements.txt ]; then
+            pip install -r requirements.txt
+          fi
+
+      - name: Verify Python syntax
+        run: |
+          python -m py_compile main.py
+          python -m py_compile files.py
+          python -m py_compile rest.py
+          python -m py_compile final.py
+
+      - name: Run Builder
+        run: |
+          python main.py
+
+      - name: Verify project structure
+        run: |
+          test -d DaraStudio
+          test -d DaraStudio/lib
+          test -d DaraStudio/lib/core
+          test -d DaraStudio/lib/editor
+          test -d DaraStudio/lib/workspace
+          test -d DaraStudio/lib/terminal
+          test -d DaraStudio/lib/settings
+          test -d DaraStudio/lib/templates
+          test -d DaraStudio/lib/extensions
+          test -d DaraStudio/lib/shared
+
+      - name: Verify important files
+        run: |
+          test -f DaraStudio/lib/main.dart
+          test -f DaraStudio/lib/core/app.dart
+          test -f DaraStudio/lib/core/config.dart
+          test -f DaraStudio/pubspec.yaml
+          test -f DaraStudio/README.md
+
+      - name: Show generated files
+        run: |
+          find DaraStudio
+
+      - name: Upload generated project
+        uses: actions/upload-artifact@v4
+        with:
+          name: DaraStudio
+          path: DaraStudio
