@@ -1,0 +1,6 @@
+
+APP_NAME = "Dara Cloud Sync"
+VERSION = "1.0.0"
+
+TELEGRAM_TOKEN = ""
+GITHUB_TOKEN = ""
